@@ -25,8 +25,16 @@ import { useEventContext } from "../../../context/EventContext";
 import { useAuth } from "../../../api/hooks/useAuth";
 import toast from "react-hot-toast";
 import { NoEventsState } from "../../molecules/NoEventsState";
+import { BottomSheet } from "../../molecules/BottomSheet";
 import { ChevronDownIcon, CollectionIcon, UserGroupIcon, UserIcon, ChartBarIcon, ArrowsExpandIcon } from "@heroicons/react/solid";
 import { saveAs } from "file-saver";
+import { useIsMobile } from "../../../hooks/useIsMobile";
+
+type UnassignedGuestLite = {
+  id: string;
+  guestName: string;
+  paxCount: number;
+};
 
 export default function TablesPage() {
   // ─── All hooks first (React Rules of Hooks) ─────────────────────────────────────────
@@ -53,6 +61,9 @@ export default function TablesPage() {
   const [selectedTableIds, setSelectedTableIds] = useState<Set<string>>(new Set());
   const [showBulkDeleteConfirm, setShowBulkDeleteConfirm] = useState(false);
   const [statsExpanded, setStatsExpanded] = useState(true);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [mobilePickedGuest, setMobilePickedGuest] = useState<UnassignedGuestLite | null>(null);
+  const isMobile = useIsMobile();
 
   // Calculate statistics (must be before early returns - React rules of hooks)
   const stats = useMemo(() => {
@@ -391,10 +402,12 @@ export default function TablesPage() {
               <StatsCard label="Total Capacity" value={stats.totalCapacity} variant="secondary" size="sm" icon={<ChartBarIcon className="w-4 h-4" />} />
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              {/* Drag-and-drop tip */}
+              {/* Tip — different copy on mobile (no drag-and-drop) */}
               <div className="flex-1 p-3 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-100 dark:border-indigo-800">
                 <p className="text-sm text-indigo-700 dark:text-indigo-300">
-                  <strong>Tip:</strong> Drag guests from the unassigned panel and drop them onto tables
+                  <strong>Tip:</strong> {isMobile
+                    ? "Tap the Unassigned button at the bottom-right to assign guests to tables."
+                    : "Drag guests from the unassigned panel and drop them onto tables"}
                 </p>
               </div>
 
@@ -442,8 +455,8 @@ export default function TablesPage() {
 
       {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 min-h-0">
-        {/* Unassigned Panel (1 column) */}
-        <div className="lg:col-span-1 lg:max-h-full">
+        {/* Unassigned Panel (1 column) — desktop only; mobile uses sticky FAB + BottomSheet */}
+        <div className="hidden lg:block lg:col-span-1 lg:max-h-full">
           <div className="lg:sticky lg:top-0 bg-white dark:bg-accent rounded-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Unassigned Guests ({unassignedGuests.length})
@@ -475,7 +488,7 @@ export default function TablesPage() {
             </div>
           </div>
         </div>
-        
+
         {/* Tables Grid (3 columns) */}
         <div className="lg:col-span-3 overflow-y-auto">
           {filteredTables.length === 0 ? (
@@ -519,6 +532,149 @@ export default function TablesPage() {
           )}
         </div>
       </div>
+
+      {/* Mobile: sticky FAB to surface unassigned guests */}
+      {!isReadOnly && unassignedGuests.length > 0 && (
+        <button
+          type="button"
+          onClick={() => {
+            setMobilePickedGuest(null);
+            setMobileSheetOpen(true);
+          }}
+          className="lg:hidden fixed bottom-4 right-4 z-50 inline-flex items-center gap-2 px-4 py-3 rounded-full shadow-lg bg-primary text-white font-medium text-sm hover:opacity-90 transition-opacity"
+          aria-label={`Show ${unassignedGuests.length} unassigned guests`}
+        >
+          <UserIcon className="w-4 h-4" />
+          Unassigned
+          <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-white/25 text-xs font-bold">
+            {unassignedGuests.length}
+          </span>
+        </button>
+      )}
+
+      {/* Mobile: two-step assignment BottomSheet (pick guest → pick table) */}
+      <BottomSheet
+        isOpen={mobileSheetOpen}
+        title={
+          mobilePickedGuest
+            ? `Assign ${mobilePickedGuest.guestName} to…`
+            : `Unassigned Guests (${unassignedGuests.length})`
+        }
+        onClose={() => {
+          setMobileSheetOpen(false);
+          setMobilePickedGuest(null);
+        }}
+      >
+        {mobilePickedGuest ? (
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setMobilePickedGuest(null)}
+              className="text-sm text-primary font-medium hover:underline"
+            >
+              ← Pick a different guest
+            </button>
+            <div className="space-y-2 max-h-[60vh] overflow-y-auto">
+              {tablesWithGuests.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                  No tables available. Create tables first.
+                </p>
+              ) : (
+                tablesWithGuests.map((table) => {
+                  const guestPax = mobilePickedGuest.paxCount;
+                  const willExceed = table.assignedCount + guestPax > table.capacity;
+                  const isOver = table.assignedCount > table.capacity;
+                  return (
+                    <button
+                      key={table.id}
+                      onClick={() => {
+                        const guestId = mobilePickedGuest.id;
+                        if (willExceed) {
+                          toast(`⚠️ ${table.name} is over capacity (${table.assignedCount + guestPax}/${table.capacity}). Guest assigned anyway.`, {
+                            duration: 4000,
+                            style: { background: "#fef3c7", color: "#92400e" },
+                          });
+                        }
+                        assignGuest.mutate(
+                          { guestId, tableId: table.id },
+                          {
+                            onSuccess: () => {
+                              if (!willExceed) {
+                                toast.success(`${mobilePickedGuest.guestName} assigned to ${table.name}`);
+                              }
+                              setMobilePickedGuest(null);
+                              setMobileSheetOpen(false);
+                            },
+                            onError: () => toast.error("Failed to assign guest to table"),
+                          }
+                        );
+                      }}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-colors ${
+                        isOver || willExceed
+                          ? "border-red-400 dark:border-red-600 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-primary/5"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-gray-900 dark:text-white">{table.name}</p>
+                        {(isOver || willExceed) && (
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400">
+                            {isOver ? "Over capacity" : "Will exceed"}
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-sm mt-0.5 ${isOver || willExceed ? "text-red-600 dark:text-red-400 font-medium" : "text-gray-600 dark:text-gray-400"}`}>
+                        {table.assignedCount} / {table.capacity} seats filled
+                      </p>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-[70vh] overflow-y-auto">
+            {unassignedGuests.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400 italic text-center py-8">
+                All guests have been assigned!
+              </p>
+            ) : (
+              unassignedGuests.map((guest) => {
+                const pax = guest.pax || guest.noOfPax || 1;
+                return (
+                  <button
+                    key={guest.id}
+                    onClick={() =>
+                      setMobilePickedGuest({
+                        id: guest.id,
+                        guestName: guest.guestName || guest.name,
+                        paxCount: pax,
+                      })
+                    }
+                    className="w-full text-left p-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-primary/5 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {guest.guestName || guest.name}
+                      </p>
+                      {pax > 1 && (
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                          {pax} pax
+                        </span>
+                      )}
+                    </div>
+                    {guest.phoneNo && (
+                      <p className="text-sm mt-0.5 text-gray-600 dark:text-gray-400">
+                        {guest.phoneNo.startsWith("+") ? guest.phoneNo : "+" + guest.phoneNo}
+                      </p>
+                    )}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        )}
+      </BottomSheet>
 
       {/* Modals */}
       <QuickSetupModal
