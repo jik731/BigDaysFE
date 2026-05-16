@@ -25,7 +25,9 @@ import { GiftFormModal } from "./GiftFormModal";
 import { NoEventsState } from "../../molecules/NoEventsState";
 import { DeleteConfirmationModal } from "../../molecules/DeleteConfirmationModal";
 import { Modal } from "../../molecules/Modal";
+import { BottomSheet } from "../../molecules/BottomSheet";
 import { GuestHelpModal } from "../../molecules/GuestHelpModal";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 import QrStatusBadge from "../../molecules/QrStatusBadge";
 import QrImageModal from "../../molecules/QrImageModal";
 import type { QrToken, QrStatus } from "../../../types/qr";
@@ -69,6 +71,8 @@ export default function GuestsPage() {
     message: "",
   });
   const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Gift map: guestCode → amount (joined from wallet transactions)
   const giftMap = useMemo(() => {
@@ -279,11 +283,11 @@ export default function GuestsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-center mb-4 gap-4">
+      <div className="hidden md:flex md:items-center mb-4 gap-4">
         <select
           value={guestTypeFilter}
           onChange={(e) => setGuestTypeFilter(e.target.value)}
-          className="w-full md:w-1/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="md:w-1/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
           {["All", "Family", "VIP", "Friend", "Other"].map((t) => (
             <option key={t} value={t}>
@@ -295,7 +299,7 @@ export default function GuestsPage() {
         <select
           value={assignFilter}
           onChange={(e) => setAssignFilter(e.target.value as "all" | "assigned" | "unassigned")}
-          className="w-full md:w-1/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="md:w-1/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
         >
           <option value="all">All Seating</option>
           <option value="assigned">Assigned</option>
@@ -307,8 +311,31 @@ export default function GuestsPage() {
           placeholder="Search guests by name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:flex-1 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="md:flex-1 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
         />
+      </div>
+
+      {/* Mobile filters: search inline + Filters button opens BottomSheet */}
+      <div className="md:hidden flex items-center mb-4 gap-2">
+        <input
+          type="text"
+          placeholder="Search guests..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-1 min-w-0 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
+        <button
+          type="button"
+          onClick={() => setFilterSheetOpen(true)}
+          className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-accent text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
+          Filters
+          {(guestTypeFilter !== "All" || assignFilter !== "all") && (
+            <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-primary text-white text-xs font-bold">
+              {(guestTypeFilter !== "All" ? 1 : 0) + (assignFilter !== "all" ? 1 : 0)}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* Empty State */}
@@ -446,24 +473,25 @@ export default function GuestsPage() {
                 {!isReadOnly && (() => {
                   const qrToken = qrMap.get(guest.guestId ?? guest.id);
                   const qrStatus = getQrStatus(qrToken);
-                  const hasOverflow = !!wallet || qrStatus === "Generated" || qrStatus === "CheckedIn";
+                  const hasDesktopOverflow = !!wallet || qrStatus === "Generated" || qrStatus === "CheckedIn";
+                  const showOverflow = isMobile || hasDesktopOverflow;
                   return (
                     <div className="mt-4 flex items-center gap-2">
                       {/* Primary: Edit */}
                       <button
                         onClick={() => setModal({ open: true, guest })}
                         title="Edit guest"
-                        className="p-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-accent dark:border-white/10 dark:text-white dark:hover:bg-white/10 transition-colors"
+                        className="p-3 md:p-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-accent dark:border-white/10 dark:text-white dark:hover:bg-white/10 transition-colors"
                       >
                         <PencilIcon className="h-4 w-4" />
                       </button>
 
-                      {/* Assign / Unassign icon button */}
+                      {/* Assign / Unassign — desktop only; mobile uses overflow */}
                       {guest.tableId ? (
                         <button
                           onClick={() => handleUnassignTable(guest)}
                           title="Unassign from table"
-                          className="p-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors"
+                          className="hidden md:inline-flex p-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors"
                         >
                           <XIcon className="h-4 w-4" />
                         </button>
@@ -471,13 +499,13 @@ export default function GuestsPage() {
                         <button
                           onClick={() => setAssignModal({ open: true, guest })}
                           title="Assign to table"
-                          className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                          className="hidden md:inline-flex p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
                         >
                           <Chair size={16} weight="bold" />
                         </button>
                       )}
 
-                      {/* WhatsApp Invite */}
+                      {/* WhatsApp Invite — desktop only; mobile uses overflow */}
                       <button
                         disabled={!guest.phoneNo}
                         onClick={() =>
@@ -491,7 +519,7 @@ export default function GuestsPage() {
                           })
                         }
                         title={guest.phoneNo ? "Send WhatsApp Invite" : "No phone number"}
-                        className="p-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="hidden md:inline-flex p-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg">
                           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
@@ -499,15 +527,42 @@ export default function GuestsPage() {
                         </svg>
                       </button>
 
-                      {/* Overflow: ⋯ */}
-                      {hasOverflow && (
+                      {/* Overflow: ⋯ — always on mobile (carries Assign/WhatsApp), conditional on desktop */}
+                      {showOverflow && (
                         <Dropdown
                           trigger={
-                            <button className="p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-accent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
+                            <button className="p-3 md:p-2 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-accent text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors">
                               <DotsThree size={16} weight="bold" />
                             </button>
                           }
                         >
+                          {isMobile && (
+                            guest.tableId ? (
+                              <DropdownItem onClick={() => handleUnassignTable(guest)}>
+                                Unassign from table
+                              </DropdownItem>
+                            ) : (
+                              <DropdownItem onClick={() => setAssignModal({ open: true, guest })}>
+                                Assign to table
+                              </DropdownItem>
+                            )
+                          )}
+                          {isMobile && guest.phoneNo && (
+                            <DropdownItem
+                              onClick={() =>
+                                setWaModal({
+                                  open: true,
+                                  guest,
+                                  message: buildWaMessage(
+                                    guest.guestName ?? guest.name ?? "Guest",
+                                    event?.title ?? "our event"
+                                  ),
+                                })
+                              }
+                            >
+                              Send WhatsApp Invite
+                            </DropdownItem>
+                          )}
                           {wallet && (
                             <DropdownItem
                               onClick={() =>
@@ -603,61 +658,130 @@ export default function GuestsPage() {
         currencySymbol={currencySymbol}
       />
 
-      {/* Table Assignment Modal */}
-      <Modal
-        isOpen={assignModal.open && !!assignModal.guest}
-        title={`Assign ${assignModal.guest?.guestName ?? ""} to Table`}
-        onClose={() => setAssignModal({ open: false })}
-        className="max-w-md"
-      >
-        <div className="space-y-2 max-h-96 overflow-y-auto">
-          {tables.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-              No tables available. Please create tables first.
-            </p>
-          ) : (
-            tables.map((table) => {
-              const occupied = tableOccupancy.get(table.id) ?? 0;
-              const isFull = occupied >= table.capacity;
-              const isOver = occupied > table.capacity;
-              return (
-                <button
-                  key={table.id}
-                  onClick={() => handleAssignTable(assignModal.guest!, table.id)}
-                  className={`w-full text-left p-3 rounded-lg border-2 transition-colors ${
-                    isOver
-                      ? "border-red-400 dark:border-red-600 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      : isFull
-                      ? "border-orange-300 dark:border-orange-600 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-                      : "border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-primary/5"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-gray-900 dark:text-white">{table.name}</p>
-                    {isOver && (
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400">Over capacity</span>
-                    )}
-                    {isFull && !isOver && (
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400">Full</span>
-                    )}
-                  </div>
-                  <p className={`text-sm mt-0.5 ${isOver ? "text-red-600 dark:text-red-400 font-medium" : "text-gray-600 dark:text-gray-400"}`}>
-                    {occupied} / {table.capacity} seats filled
-                  </p>
-                </button>
-              );
-            })
-          )}
-        </div>
-        <div className="mt-4 flex justify-end">
-          <Button
-            variant="secondary"
-            onClick={() => setAssignModal({ open: false })}
+      {/* Table Assignment — Modal on desktop, BottomSheet on mobile */}
+      {(() => {
+        const assignTitle = `Assign ${assignModal.guest?.guestName ?? ""} to Table`;
+        const assignOpen = assignModal.open && !!assignModal.guest;
+        const assignBody = (
+          <>
+            <div className={`space-y-2 overflow-y-auto ${isMobile ? "max-h-[60vh]" : "max-h-96"}`}>
+              {tables.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+                  No tables available. Please create tables first.
+                </p>
+              ) : (
+                tables.map((table) => {
+                  const occupied = tableOccupancy.get(table.id) ?? 0;
+                  const isFull = occupied >= table.capacity;
+                  const isOver = occupied > table.capacity;
+                  return (
+                    <button
+                      key={table.id}
+                      onClick={() => handleAssignTable(assignModal.guest!, table.id)}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition-colors ${
+                        isOver
+                          ? "border-red-400 dark:border-red-600 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          : isFull
+                          ? "border-orange-300 dark:border-orange-600 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                          : "border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary hover:bg-primary/5"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="font-semibold text-gray-900 dark:text-white">{table.name}</p>
+                        {isOver && (
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400">Over capacity</span>
+                        )}
+                        {isFull && !isOver && (
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-400">Full</span>
+                        )}
+                      </div>
+                      <p className={`text-sm mt-0.5 ${isOver ? "text-red-600 dark:text-red-400 font-medium" : "text-gray-600 dark:text-gray-400"}`}>
+                        {occupied} / {table.capacity} seats filled
+                      </p>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+            <div className="mt-4 flex justify-end">
+              <Button
+                variant="secondary"
+                onClick={() => setAssignModal({ open: false })}
+              >
+                Cancel
+              </Button>
+            </div>
+          </>
+        );
+        return isMobile ? (
+          <BottomSheet
+            isOpen={assignOpen}
+            title={assignTitle}
+            onClose={() => setAssignModal({ open: false })}
           >
-            Cancel
-          </Button>
+            {assignBody}
+          </BottomSheet>
+        ) : (
+          <Modal
+            isOpen={assignOpen}
+            title={assignTitle}
+            onClose={() => setAssignModal({ open: false })}
+            className="max-w-md"
+          >
+            {assignBody}
+          </Modal>
+        );
+      })()}
+
+      {/* Mobile Filter BottomSheet */}
+      <BottomSheet
+        isOpen={filterSheetOpen}
+        title="Filters"
+        onClose={() => setFilterSheetOpen(false)}
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              Guest type
+            </label>
+            <select
+              value={guestTypeFilter}
+              onChange={(e) => setGuestTypeFilter(e.target.value)}
+              className="w-full border border-gray-200 dark:border-white/10 rounded-xl px-3 py-3 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              {["All", "Family", "VIP", "Friend", "Other"].map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              Seating assignment
+            </label>
+            <select
+              value={assignFilter}
+              onChange={(e) => setAssignFilter(e.target.value as "all" | "assigned" | "unassigned")}
+              className="w-full border border-gray-200 dark:border-white/10 rounded-xl px-3 py-3 text-sm bg-white dark:bg-accent focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="all">All Seating</option>
+              <option value="assigned">Assigned</option>
+              <option value="unassigned">Unassigned</option>
+            </select>
+          </div>
+          <div className="flex justify-between gap-2 pt-2">
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setGuestTypeFilter("All");
+                setAssignFilter("all");
+              }}
+            >
+              Reset
+            </Button>
+            <Button onClick={() => setFilterSheetOpen(false)}>Done</Button>
+          </div>
         </div>
-      </Modal>
+      </BottomSheet>
 
       {/* WhatsApp Invite Modal */}
       <Modal
