@@ -23,6 +23,7 @@ import { DeleteConfirmationModal } from "../../molecules/DeleteConfirmationModal
 import { NoEventsState } from "../../molecules/NoEventsState";
 import { PageLoader } from "../../atoms/PageLoader";
 import { CollectionIcon, UserGroupIcon, UserIcon } from "@heroicons/react/solid";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 let idCounter = 0;
 function uid() {
@@ -84,6 +85,15 @@ export default function FloorPlanPage() {
   } | null>(null);
 
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+
+  const isMobile = useIsMobile();
+  const [mobileBannerDismissed, setMobileBannerDismissed] = useState(
+    () => typeof window !== "undefined" && sessionStorage.getItem("floorPlanMobileBannerDismissed") === "1"
+  );
+  const dismissMobileBanner = () => {
+    setMobileBannerDismissed(true);
+    sessionStorage.setItem("floorPlanMobileBannerDismissed", "1");
+  };
 
   const [standardizeOpen, setStandardizeOpen] = useState(false);
   const [stdShape, setStdShape] = useState<"round" | "rect" | "square">("round");
@@ -522,9 +532,23 @@ export default function FloorPlanPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
+      {isMobile && !mobileBannerDismissed && (
+        <div className="flex items-start gap-3 mx-5 mt-3 px-3 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-sm text-amber-800 dark:text-amber-200">
+          <span className="flex-1">
+            Floor plan editing works best on desktop. On mobile this is a view-only preview — use the Tables page to assign guests.
+          </span>
+          <button
+            onClick={dismissMobileBanner}
+            className="flex-shrink-0 text-amber-500 hover:text-amber-700 dark:hover:text-amber-100 transition text-base leading-none mt-0.5"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-2 flex-wrap">
         <h2 className="text-2xl font-semibold text-primary">Floor Plan</h2>
-        {!isReadOnly && (
+        {!isReadOnly && !isMobile && (
           <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="secondary"
@@ -565,7 +589,7 @@ export default function FloorPlanPage() {
       </div>
 
       <div className="flex items-center gap-2 px-5 py-1.5 overflow-x-auto overflow-y-visible">
-        {!isReadOnly && (
+        {!isReadOnly && !isMobile && (
           <>
             <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-100/80 dark:bg-slate-800/80 border border-gray-200/60 dark:border-gray-700/60 flex-shrink-0">
               <button onClick={() => handleShapeTool("round")} className={toolBtn(toolMode === "round")} title="Round table">
@@ -700,17 +724,19 @@ export default function FloorPlanPage() {
             </button>
           </div>
 
-          <button
-            onClick={() => setSnapEnabled((s) => !s)}
-            className={`px-2 py-1.5 rounded-lg text-[11px] font-semibold border transition ${
-              snapEnabled
-                ? "bg-primary/10 border-primary/30 text-primary dark:bg-primary/20"
-                : "bg-white dark:bg-slate-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
-            }`}
-            title={`Snap to grid: ${snapEnabled ? "ON" : "OFF"}`}
-          >
-            Snap
-          </button>
+          {!isMobile && (
+            <button
+              onClick={() => setSnapEnabled((s) => !s)}
+              className={`px-2 py-1.5 rounded-lg text-[11px] font-semibold border transition ${
+                snapEnabled
+                  ? "bg-primary/10 border-primary/30 text-primary dark:bg-primary/20"
+                  : "bg-white dark:bg-slate-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
+              }`}
+              title={`Snap to grid: ${snapEnabled ? "ON" : "OFF"}`}
+            >
+              Snap
+            </button>
+          )}
 
           <button onClick={handleResetView} className={iconBtn} title="Fit all tables to view">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
@@ -764,20 +790,8 @@ export default function FloorPlanPage() {
                 onGuestDragEnd={isReadOnly ? undefined : () => setDraggedGuest(null)}
               />
             </div>
-            <button
-              onClick={() => setShowGuestPanel(true)}
-              className="lg:hidden fixed bottom-6 left-6 z-40 bg-primary text-white px-4 py-3 rounded-full shadow-lg shadow-primary/25 flex items-center gap-2 hover:brightness-110 transition active:scale-95"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-              </svg>
-              <span className="text-sm font-semibold">Guests</span>
-              {stats.unassignedPax > 0 && (
-                <span className="bg-amber-400 text-amber-900 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  {stats.unassignedPax}
-                </span>
-              )}
-            </button>
+            {/* Guests FAB is hidden on mobile: drag-into-canvas isn't supported on touch.
+                Mobile users assign guests from the Tables page. */}
           </>
         )}
       </div>
