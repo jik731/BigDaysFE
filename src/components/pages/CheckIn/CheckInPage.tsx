@@ -303,13 +303,13 @@ export default function CheckInPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold text-primary">Guest Check-in</h1>
+      <div data-tour="checkin-header">
+        <h1 className="text-3xl font-display font-semibold text-primary">Guest Check-in</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Scan QR codes or manually check in guests</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3">
+      <div data-tour="checkin-stats" className="grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-900/20 p-3">
           <p className="text-[11px] uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-300">Checked In</p>
           <p className="text-2xl font-bold text-emerald-800 dark:text-emerald-200 leading-tight">
@@ -336,7 +336,7 @@ export default function CheckInPage() {
 
         {/* QR Scanner card */}
         <CameraErrorBoundary onReset={handleStopCamera}>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex flex-col gap-4">
+          <div data-tour="checkin-scanner" className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-1">
               <QrcodeIcon className="h-4 w-4 text-gray-400" />
               <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300">QR Scan</h2>
@@ -399,7 +399,7 @@ export default function CheckInPage() {
         </CameraErrorBoundary>
 
         {/* Manual card */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div data-tour="checkin-manual" className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="px-5 pt-5 pb-4 border-b border-gray-100 dark:border-gray-700/60 flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <UserGroupIcon className="h-4 w-4 text-gray-400" />

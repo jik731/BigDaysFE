@@ -18,9 +18,9 @@ export function NoEventsState({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 rounded-2xl p-8 text-center">
+    <div className="bg-accent rounded-2xl p-8 text-center">
       <div className="max-w-md mx-auto">
-        <div className="h-20 w-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 grid place-items-center">
+        <div className="h-20 w-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary to-button grid place-items-center">
           <Icon className="h-10 w-10 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">

@@ -137,16 +137,16 @@ export default function WalletPage() {
   return (
     <>
       {/* Page Title & Actions */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+      <div data-tour="wallet-header" className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
         <div>
-          <h2 className="text-2xl font-semibold text-primary flex items-center gap-2">
-            💰 Wallet & Budget
-          </h2>
+          <h1 className="text-3xl font-display font-semibold text-primary">
+            Wallet & Budget
+          </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Track your event expenses and manage your budget
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div data-tour="wallet-actions" className="flex flex-wrap gap-2">
           <Button
             variant="secondary"
             className="flex items-center gap-2"
@@ -209,11 +209,13 @@ export default function WalletPage() {
       </div>
 
       {/* Wallet Summary Cards */}
-      <WalletSummaryCards
-        wallet={wallet}
-        transactions={transactions}
-        onEditBudget={() => handleOpenSetupWallet(true)}
-      />
+      <div data-tour="wallet-summary">
+        <WalletSummaryCards
+          wallet={wallet}
+          transactions={transactions}
+          onEditBudget={() => handleOpenSetupWallet(true)}
+        />
+      </div>
 
       {/* Category Breakdown */}
       <CategoryBreakdown wallet={wallet} transactions={transactions} />

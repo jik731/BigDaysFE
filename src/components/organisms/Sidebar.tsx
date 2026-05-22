@@ -11,6 +11,7 @@ import UserCircleIcon from "@heroicons/react/outline/UserCircleIcon";
 import {
   CalendarIcon,
   ClipboardListIcon,
+  ClipboardCheckIcon,
   UserIcon,
   CurrencyDollarIcon,
   UserGroupIcon,
@@ -48,6 +49,7 @@ const BASE_LINKS: SidebarLink[] = [
   { to: "/app/tables/floorplan", label: "Floor Plan", Icon: Blueprint, sub: true },
   { to: "/app/wallet", label: "Wallet", Icon: CurrencyDollarIcon },
   { to: "/app/checkin", label: "Check-in", Icon: QrcodeIcon, end: true },
+  { to: "/app/checklist", label: "Checklist", Icon: ClipboardCheckIcon },
   { to: "/app/users", label: "Users", Icon: UserIcon },
   { to: "/app/crew", label: "Crew", Icon: IdentificationIcon, sub: true },
 ];
@@ -143,7 +145,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
 
           {/* Nav links — scrollable middle */}
-          <div className={`flex-1 overflow-y-auto py-3 ${collapsed ? "md:px-2" : "px-3"}`}>
+          <div className={`flex-1 overflow-y-auto py-3 ${collapsed ? "md:px-2" : "px-3"}`} data-tour="sidebar-nav">
             {/* Navigation links */}
             <nav className="space-y-0.5">
               {visibleLinks.map(({ to, label, Icon, end, sub, external, soon }) =>

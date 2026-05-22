@@ -663,7 +663,7 @@ function LayerRow({
       <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition" onClick={(e) => e.stopPropagation()}>
         <button onClick={onMoveUp}    title="Move up"    className="w-5 h-5 flex items-center justify-center rounded text-gray-400 hover:bg-gray-200 hover:text-gray-600 text-xs transition">↑</button>
         <button onClick={onMoveDown}  title="Move down"  className="w-5 h-5 flex items-center justify-center rounded text-gray-400 hover:bg-gray-200 hover:text-gray-600 text-xs transition">↓</button>
-        <button onClick={onDuplicate} title="Duplicate"  className="w-5 h-5 flex items-center justify-center rounded text-gray-400 hover:bg-blue-50 hover:text-blue-500 text-xs transition">⧉</button>
+        <button onClick={onDuplicate} title="Duplicate"  className="w-5 h-5 flex items-center justify-center rounded text-gray-400 hover:bg-primary/10 hover:text-primary text-xs transition">⧉</button>
         <button onClick={onRemove}    title="Remove"     className="w-5 h-5 flex items-center justify-center rounded text-gray-400 hover:bg-rose-50 hover:text-rose-500 text-xs transition">✕</button>
       </div>
     </div>

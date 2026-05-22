@@ -662,7 +662,7 @@ export default function TablesRedesignPage() {
                 ) : (
                   openTable.guests.map(g => (
                     <div key={g.id} className="flex items-center gap-2 p-2 rounded-lg bg-accent/20 hover:bg-accent/40 transition group">
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-indigo-400 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-button flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                         {g.guestName.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">

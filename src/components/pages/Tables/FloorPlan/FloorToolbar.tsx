@@ -188,24 +188,24 @@ const FloorSelectionBar: React.FC<{
             : "Wall";
 
   return (
-    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 animate-fade-in">
-      <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+    <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/5 border border-primary/20 animate-fade-in">
+      <span className="text-[11px] font-semibold text-primary whitespace-nowrap">
         {label}
       </span>
 
       {/* Table shape switcher */}
       {selectedItem.type === "table" && selectedId && (
-        <div className="flex items-center gap-0.5 ml-1 p-0.5 rounded bg-indigo-100/80 dark:bg-indigo-800/40">
+        <div className="flex items-center gap-0.5 ml-1 p-0.5 rounded bg-primary/10">
           {(["round", "rect", "square"] as const).map((s) => (
             <button
               key={s}
               onClick={() => onChangeTableShape(selectedId, s)}
-              className={`p-1 rounded transition ${selectedShape === s ? "bg-white dark:bg-indigo-700 shadow-sm" : "hover:bg-white/60 dark:hover:bg-indigo-700/40"}`}
+              className={`p-1 rounded transition ${selectedShape === s ? "bg-white shadow-sm" : "hover:bg-white/60"}`}
               title={`Change to ${s}`}
             >
-              {s === "round" && <div className="w-3 h-3 rounded-full border-2 border-indigo-500" />}
-              {s === "rect" && <div className="w-5 h-2.5 rounded-sm border-2 border-indigo-500" />}
-              {s === "square" && <div className="w-3 h-3 rounded-sm border-2 border-indigo-500" />}
+              {s === "round" && <div className="w-3 h-3 rounded-full border-2 border-primary" />}
+              {s === "rect" && <div className="w-5 h-2.5 rounded-sm border-2 border-primary" />}
+              {s === "square" && <div className="w-3 h-3 rounded-sm border-2 border-primary" />}
             </button>
           ))}
         </div>
@@ -226,7 +226,7 @@ const FloorSelectionBar: React.FC<{
       {/* Deselect */}
       <button
         onClick={onDeselect}
-        className="ml-0.5 p-0.5 rounded text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition"
+        className="ml-0.5 p-0.5 rounded text-primary/50 hover:text-primary transition"
         title="Deselect"
       >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-3 w-3">

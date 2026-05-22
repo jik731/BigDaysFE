@@ -1,17 +1,18 @@
 /* src/index.css */
 @import "tailwindcss";
 
-/* 1. Match your .dark class for all dark: utilities */
+/* 1. Match your .dark class for all dark: utilities (legacy — palette switch
+   now uses .slate at :root; dark mode is no longer toggled). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* 2. Light-mode CSS variables (apply before components/utilities) */
+/* 2. Default palette ("Rose") — Blush rose + champagne for the feminine theme */
 @theme {
-  --color-primary:    oklch(0.60 0.18 260);  /* Modern indigo for core actions */
-  --color-secondary:  oklch(0.72 0.14 200);  /* Soft teal for highlights */
-  --color-accent:     oklch(0.88 0.08 80);   /* Warm sand for surfaces */
-  --color-background: oklch(0.98 0.02 96);   /* Clean ivory for pages */
-  --color-text:       oklch(0.22 0.03 260);  /* Deep slate for readability */
-  --color-button:     oklch(0.58 0.20 270);  /* Vibrant accent for buttons */
+  --color-primary:    oklch(0.65 0.13 15);   /* Dusty rose for core actions */
+  --color-secondary:  oklch(0.78 0.10 70);   /* Champagne gold for highlights */
+  --color-accent:     oklch(0.92 0.04 30);   /* Blush cream for surfaces */
+  --color-background: oklch(0.985 0.01 60);  /* Warm ivory for pages */
+  --color-text:       oklch(0.25 0.03 20);   /* Deep rose-brown for readability */
+  --color-button:     oklch(0.55 0.16 10);   /* Deep rose for CTA buttons */
 
   /* ── Landing / public palette ── */
   --color-ivory:          #F5EFE6;
@@ -32,16 +33,14 @@
   --font-playfair:'Fraunces', 'Cormorant Garamond', serif;
 }
 
-/* 3. Dark-mode overrides, shifted to navy + teal */
-@layer base {
-  @variant dark {
-      --color-primary:    oklch(0.75 0.12 250);  /* Misty indigo */
-      --color-secondary:  oklch(0.70 0.12 195);  /* Muted teal */
-      --color-accent:     oklch(0.32 0.04 260);  /* Deep slate cards */
-      --color-background: oklch(0.16 0.03 250);  /* Night navy */
-      --color-text:       oklch(0.90 0.02 240);  /* Soft white */
-      --color-button:     oklch(0.70 0.12 270);  /* Gentle violet */
-  }
+/* 3. "Slate" palette — Deep slate blue + steel bronze, applied via :root.slate */
+:root.slate {
+  --color-primary:    oklch(0.50 0.07 245);  /* Deep slate blue */
+  --color-secondary:  oklch(0.65 0.06 65);   /* Steel bronze */
+  --color-accent:     oklch(0.92 0.01 240);  /* Mist gray for surfaces */
+  --color-background: oklch(0.985 0.005 240); /* Cool off-white for pages */
+  --color-text:       oklch(0.22 0.03 250);  /* Charcoal navy */
+  --color-button:     oklch(0.42 0.10 250);  /* Deep navy for CTA buttons */
 }
 
 /* 4. Now pull in Tailwind’s generated components & utilities */

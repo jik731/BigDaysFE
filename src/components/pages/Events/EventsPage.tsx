@@ -97,9 +97,9 @@ export default function EventsPage() {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div data-tour="events-header" className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="space-y-1">
-            <h2 className="text-2xl font-semibold text-primary">Your Events</h2>
+            <h1 className="text-3xl font-display font-semibold text-primary">Your Events</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">Prioritize the next celebration or revisit archived plans.</p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -192,13 +192,13 @@ export default function EventsPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div data-tour="events-stats" className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <StatsCard label="Active Events" value={activeCount} variant="primary" size="sm" icon={<CheckCircleIcon className="w-4 h-4" />} />
           <StatsCard label="Archived Events" value={archivedCount} variant="warning" size="sm" icon={<ArchiveIcon className="w-4 h-4" />} />
           <StatsCard label="Upcoming Next" value={nextEventDate ? formatEventDate(nextEventDate.toISOString()) : "—"} variant="secondary" size="sm" icon={<CalendarIcon className="w-4 h-4" />} />
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div data-tour="events-search" className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex flex-1 gap-3">
             <input
               type="search"
@@ -226,7 +226,7 @@ export default function EventsPage() {
             <Button onClick={() => setModal({ open: true })}>Create your first event</Button>
           </div>
         ) : (
-          <ul className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <ul data-tour="events-list" className="grid grid-cols-1 xl:grid-cols-2 gap-4">
             {filteredEvents.map((ev) => {
               const isActive = eventId === ev.id;
               const isArchived = Boolean(ev?.raw?.isDeleted);

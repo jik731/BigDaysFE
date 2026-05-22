@@ -58,21 +58,21 @@ export default function CrewPage() {
             <span className="font-medium text-text dark:text-white">{event?.title}</span>
           </p>
         </div>
-        <Button variant="primary" onClick={() => setModal({ open: true })}>
+        <Button data-tour="crew-add" variant="primary" onClick={() => setModal({ open: true })}>
           + Add Crew
         </Button>
       </div>
 
       {/* Info banner */}
-      <div className="mb-6 px-4 py-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl text-sm text-blue-700 dark:text-blue-300 space-y-1">
+      <div data-tour="crew-event-code" className="mb-6 px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl text-sm text-primary space-y-1">
         <p>
           Crew members sign in via the <span className="font-medium">Staff</span> tab on the
           login page. They'll need their <span className="font-medium">Crew ID</span>,
           <span className="font-medium"> PIN</span>, and the <span className="font-medium">Event Code</span> below.
         </p>
         <p className="flex flex-wrap items-center gap-2">
-          <span className="text-blue-700/80 dark:text-blue-300/80">Event Code:</span>
-          <code className="font-mono text-xs bg-white/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded px-1.5 py-0.5 break-all">
+          <span className="text-primary/70">Event Code:</span>
+          <code className="font-mono text-xs bg-white/70 border border-primary/20 rounded px-1.5 py-0.5 break-all">
             {event?.eventCode ?? "—"}
           </code>
           <button
@@ -85,7 +85,7 @@ export default function CrewPage() {
                 () => toast.error("Could not copy")
               );
             }}
-            className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md border border-blue-300 dark:border-blue-700 bg-blue-100/60 dark:bg-blue-800/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200/70 dark:hover:bg-blue-700/40 transition-colors"
+            className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-md border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
               <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
@@ -98,7 +98,7 @@ export default function CrewPage() {
 
       {/* Empty state */}
       {crew.length === 0 && (
-        <div className="text-center py-16">
+        <div data-tour="crew-list" className="text-center py-16">
           <UserGroupIcon className="h-12 w-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" />
           <p className="text-gray-500 dark:text-gray-400 mb-4">No crew members yet.</p>
           <Button variant="primary" onClick={() => setModal({ open: true })}>
@@ -109,7 +109,7 @@ export default function CrewPage() {
 
       {/* Crew table */}
       {crew.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-primary/10 dark:border-white/10">
+        <div data-tour="crew-list" className="overflow-x-auto rounded-xl border border-primary/10 dark:border-white/10">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-primary/5 dark:bg-white/5 border-b border-primary/10 dark:border-white/10">

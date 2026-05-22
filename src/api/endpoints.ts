@@ -173,3 +173,11 @@ export const CrewEndpoints = {
   delete: (crewGuid: string) => `/Crew/Delete/${crewGuid}`,
   login: "/Crew/Login",
 };
+
+export const ChecklistEndpoints = {
+  byEvent: (eventGuid: string) => `/Checklist/ByEvent/${eventGuid}`,
+  create: "/Checklist/Create",
+  update: "/Checklist/Update",
+  delete: (id: string) => `/Checklist/${id}`,
+  seed: (eventGuid: string) => `/Checklist/Seed/${eventGuid}`,
+};

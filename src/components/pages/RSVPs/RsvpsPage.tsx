@@ -138,12 +138,12 @@ export default function RsvpsPage() {
   return (
     <>
       {/* ─── HEADER + ACTIONS ─────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-5 gap-3">
+      <div data-tour="rsvps-header" className="flex flex-col md:flex-row md:justify-between md:items-center mb-5 gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-primary">RSVPs</h2>
+          <h1 className="text-3xl font-display font-semibold text-primary">RSVPs</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Track guest responses and manage invitations</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div data-tour="rsvps-actions" className="flex flex-wrap gap-2">
           <Button onClick={() => setModal({ open: true })}>+ New RSVP</Button>
           <Button variant="secondary" onClick={() => setImportModalOpen(true)}>
             Import
@@ -156,7 +156,7 @@ export default function RsvpsPage() {
       </div>
 
       {/* ─── STAT CARDS ───────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div data-tour="rsvps-stats" className="grid grid-cols-2 gap-3 mb-6">
         <StatsCard label="Total RSVPs" value={totals.total} variant="primary" size="sm" icon={<ClipboardListIcon className="w-4 h-4" />} />
         <StatsCard label="Total Pax" value={totals.pax} variant="success" size="sm" icon={<UserGroupIcon className="w-4 h-4" />} />
       </div>
@@ -164,6 +164,7 @@ export default function RsvpsPage() {
       {/* ─── FILTERS ──────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center gap-3 mb-5">
         <input
+          data-tour="rsvps-search"
           type="text"
           placeholder="Search guests…"
           value={searchTerm}

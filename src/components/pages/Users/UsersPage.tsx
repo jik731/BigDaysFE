@@ -155,7 +155,7 @@ export default function UsersPage() {
       <>
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 className="text-2xl font-semibold text-primary">My Profile</h2>
+            <h1 className="text-3xl font-display font-semibold text-primary">My Profile</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Update your profile and account settings</p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function UsersPage() {
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
             {/* Left: Profile summary card */}
-            <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div data-tour="users-profile" className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
               {/* Avatar */}
               <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold mb-4">
                 {initials}
@@ -198,7 +198,7 @@ export default function UsersPage() {
             </div>
 
             {/* Right: Change password */}
-            <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div data-tour="users-password" className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
               <form onSubmit={handlePasswordSubmit} className="space-y-4">
                 <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                   Change Password
@@ -254,14 +254,14 @@ export default function UsersPage() {
     <>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-semibold text-primary">
+          <h1 className="text-3xl font-display font-semibold text-primary">
             {showAllUsers ? "All Users" : "My Profile"}
-          </h2>
+          </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {showAllUsers ? "Manage user accounts and permissions" : "Update your profile and account settings"}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div data-tour="users-actions" className="flex gap-2">
           {!showAllUsers && (
             <Button onClick={handleViewAllUsers} disabled={loadingAllUsers}>
               {loadingAllUsers ? "Loading..." : "View All Users"}
@@ -334,7 +334,7 @@ export default function UsersPage() {
       ) : (
         <>
           {/* Stats strip */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+          <div data-tour="users-stats" className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
             <StatsCard
               label="Total Users"
               value={loadingAllUsers ? "…" : totalUsers}
@@ -368,7 +368,7 @@ export default function UsersPage() {
           {/* Rich profile card — same layout as member */}
           {currentUser && (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-              <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div data-tour="users-profile" className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-white text-2xl font-bold mb-4">
                   {initials}
                 </div>
@@ -389,7 +389,7 @@ export default function UsersPage() {
                 </div>
               </div>
 
-              <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+              <div data-tour="users-password" className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow p-6">
                 <form onSubmit={handlePasswordSubmit} className="space-y-4">
                   <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Change Password

@@ -93,14 +93,14 @@ export default function FormFieldsPage() {
     <>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
         <h2 className="text-2xl font-semibold">Custom RSVP Fields</h2>
-        <div className="flex flex-wrap gap-2">
+        <div data-tour="formfields-actions" className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => setTemplateModal(true)} className="whitespace-nowrap">+ Add from Template</Button>
           <Button onClick={() => setModal({ open: true })} className="whitespace-nowrap">+ New Field</Button>
         </div>
       </div>
 
       {fields.length === 0 ? (
-        <div className="text-center text-gray-500 py-10 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div data-tour="formfields-list" className="text-center text-gray-500 py-10 bg-white dark:bg-gray-800 rounded-lg shadow">
           <p>No custom fields yet.</p>
           <p className="mt-2">
             Click <span className="font-semibold">“+ New Field”</span> to add
@@ -108,7 +108,7 @@ export default function FormFieldsPage() {
           </p>
         </div>
       ) : (
-        <ul className="space-y-2">
+        <ul data-tour="formfields-list" className="space-y-2">
           {fields.map((f) => (
             <li
               key={f.questionId ?? f.id}

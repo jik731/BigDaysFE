@@ -16,6 +16,8 @@ import BlogPage from "../components/pages/Public/Blog/BlogPage";
 import PublicTemplate from "../components/templates/PublicTemplate";
 import { Navbar } from "../components/organisms/Navbar";
 import { Sidebar } from "../components/organisms/Sidebar";
+import { HelpBubble } from "../components/organisms/HelpBubble";
+import { TourProvider } from "../components/tour/TourProvider";
 import { NoEventsState } from "../components/molecules/NoEventsState";
 import { useEventContext } from "../context/EventContext";
 
@@ -37,15 +39,18 @@ function AppLayout() {
   const showEmptyState = mustChooseEvent && !onEventsRoute;
 
   return (
-    <div className="flex h-screen bg-background dark:bg-slate-950 text-text">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex flex-col flex-1 min-w-0">
-        <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} />
-        <main className="flex-1 p-6 overflow-auto">
-          {showEmptyState ? <NoEventsState /> : <Outlet />}
-        </main>
+    <TourProvider>
+      <div className="flex h-screen bg-background dark:bg-slate-950 text-text">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="flex flex-col flex-1 min-w-0">
+          <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} />
+          <main className="flex-1 p-6 overflow-auto">
+            {showEmptyState ? <NoEventsState /> : <Outlet />}
+          </main>
+        </div>
+        <HelpBubble />
       </div>
-    </div>
+    </TourProvider>
   );
 }
 
@@ -106,6 +111,8 @@ import QrLookupPage from "../components/pages/Public/QrLookup/QrLookupPage";
 import RequireAuth from "../components/RequireAuth";
 import { useAuth } from "../api/hooks/useAuth";
 import CrewPage from "../components/pages/Crew/CrewPage";
+import ChecklistPage from "../components/pages/Checklist/ChecklistPage";
+import TutorialPage from "../components/pages/Tutorial/TutorialPage";
 // …and other Public pages…
 
 export default function AppRoutes() {
@@ -218,11 +225,17 @@ export default function AppRoutes() {
         {/* CREW */}
         <Route path="crew" element={<CrewPage />} />
 
+        {/* CHECKLIST */}
+        <Route path="checklist" element={<ChecklistPage />} />
+
         {/* CHECK-IN */}
         <Route path="checkin" element={<CheckInPage />} />
 
         {/* WALLET */}
         <Route path="wallet" element={<WalletPage />} />
+
+        {/* TUTORIAL */}
+        <Route path="tutorial" element={<TutorialPage />} />
 
         {/* any other /app/* → back to dashboard */}
         <Route path="*" element={<Navigate to="/app/dashboard" replace />} />

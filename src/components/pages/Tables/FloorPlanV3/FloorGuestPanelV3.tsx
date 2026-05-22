@@ -101,7 +101,7 @@ export const FloorGuestPanelV3: React.FC<Props> = ({ guests, tables, onGuestDrag
                 setDraggingId(null);
                 onGuestDragEnd?.();
               }}
-              className={`p-3 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-slate-800 cursor-grab hover:border-primary hover:bg-indigo-50 dark:hover:bg-primary/10 transition-all ${
+              className={`p-3 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-slate-800 cursor-grab hover:border-primary hover:bg-primary/5 transition-all ${
                 draggingId === guest.id ? "opacity-50" : ""
               }`}
             >

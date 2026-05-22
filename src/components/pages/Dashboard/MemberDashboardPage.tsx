@@ -126,7 +126,7 @@ export default function MemberDashboardPage() {
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-1">
+          <h1 className="text-3xl font-display font-semibold text-text dark:text-text mb-1">
             Good {new Date().getHours() < 12 ? "Morning" : "Afternoon"}! ✨
           </h1>
           <p className="text-slate-500 dark:text-slate-400">
@@ -136,7 +136,7 @@ export default function MemberDashboardPage() {
       </div>
 
       {/* Active Event Spotlight */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 p-8 text-white shadow-2xl shadow-indigo-500/30">
+      <div data-tour="dashboard-spotlight" className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary via-button to-secondary p-8 text-white shadow-2xl shadow-primary/30">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
         <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-white/5 rounded-full translate-y-24"></div>
 
@@ -201,9 +201,9 @@ export default function MemberDashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div data-tour="dashboard-stats" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* RSVP Progress */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-indigo-100 dark:hover:border-indigo-800 transition-all group">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-primary/20 transition-all group">
           <div className="flex items-start justify-between mb-4">
             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 grid place-items-center shadow-lg shadow-green-500/20 group-hover:scale-110 transition">
               <CheckCircleIcon className="h-6 w-6 text-white" />
@@ -233,9 +233,9 @@ export default function MemberDashboardPage() {
         </div>
 
         {/* Budget Status */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-indigo-100 dark:hover:border-indigo-800 transition-all group">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-primary/20 transition-all group">
           <div className="flex items-start justify-between mb-4">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-500 grid place-items-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-button grid place-items-center shadow-lg shadow-primary/20 group-hover:scale-110 transition">
               <CurrencyDollarIcon className="h-6 w-6 text-white" />
             </div>
             <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
@@ -259,14 +259,14 @@ export default function MemberDashboardPage() {
                   ? 'bg-gradient-to-r from-red-400 to-red-500'
                   : (dashboard?.budgetStats?.spentPercentage ?? 0) >= 90
                   ? 'bg-gradient-to-r from-amber-400 to-orange-500'
-                  : 'bg-gradient-to-r from-indigo-400 to-purple-500'
+                  : 'bg-gradient-to-r from-primary to-button'
               }`}
               style={{ width: `${Math.min(dashboard?.budgetStats?.spentPercentage ?? 0, 100)}%` }}
             ></div>
           </div>
           <button
             onClick={() => navigate("/app/wallet")}
-            className="flex items-center gap-2 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition"
+            className="flex items-center gap-2 text-xs text-primary hover:text-button transition"
           >
             <CashIcon className="h-4 w-4" />
             Manage Budget
@@ -274,9 +274,9 @@ export default function MemberDashboardPage() {
         </div>
 
         {/* Tables */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-pink-100 dark:hover:border-pink-800 transition-all group">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:border-secondary/30 transition-all group">
           <div className="flex items-start justify-between mb-4">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 grid place-items-center shadow-lg shadow-pink-500/20 group-hover:scale-110 transition">
+            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-secondary to-primary grid place-items-center shadow-lg shadow-secondary/20 group-hover:scale-110 transition">
               <ClipboardCheckIcon className="h-6 w-6 text-white" />
             </div>
           </div>
@@ -297,7 +297,7 @@ export default function MemberDashboardPage() {
           </div>
           <button
             onClick={() => navigate("/app/tables")}
-            className="flex items-center gap-2 text-xs text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 transition"
+            className="flex items-center gap-2 text-xs text-primary hover:text-button transition"
           >
             <TableIcon className="h-4 w-4" />
             Manage Tables
@@ -308,7 +308,7 @@ export default function MemberDashboardPage() {
       {/* Quick Actions + Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+        <div data-tour="dashboard-quick-actions" className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
           <h3 className="font-semibold text-slate-800 dark:text-white mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -324,19 +324,19 @@ export default function MemberDashboardPage() {
               href="/app/rsvps/designer-v3"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 border border-indigo-100 dark:border-indigo-800 hover:border-indigo-200 dark:hover:border-indigo-700 hover:shadow-md transition group"
+              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/10 border border-primary/15 hover:border-primary/30 hover:shadow-md transition group"
             >
-              <div className="h-10 w-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800 grid place-items-center transition">
-                <ClipboardCheckIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              <div className="h-10 w-10 rounded-xl bg-primary/10 group-hover:bg-primary/20 grid place-items-center transition">
+                <ClipboardCheckIcon className="h-5 w-5 text-primary" />
               </div>
               <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Design RSVP</span>
             </a>
             <button
               onClick={() => navigate("/app/guests")}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-950/20 dark:to-violet-950/20 border border-purple-100 dark:border-purple-800 hover:border-purple-200 dark:hover:border-purple-700 hover:shadow-md transition group"
+              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-secondary/10 to-primary/5 border border-secondary/20 hover:border-secondary/40 hover:shadow-md transition group"
             >
-              <div className="h-10 w-10 rounded-xl bg-purple-100 dark:bg-purple-900/50 group-hover:bg-purple-200 dark:group-hover:bg-purple-800 grid place-items-center transition">
-                <MailIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <div className="h-10 w-10 rounded-xl bg-secondary/15 group-hover:bg-secondary/25 grid place-items-center transition">
+                <MailIcon className="h-5 w-5 text-secondary" />
               </div>
               <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 Send Invites
@@ -353,10 +353,10 @@ export default function MemberDashboardPage() {
             </button>
             <button
               onClick={() => navigate("/app/wallet")}
-              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950/20 dark:to-rose-950/20 border border-pink-100 dark:border-pink-800 hover:border-pink-200 dark:hover:border-pink-700 hover:shadow-md transition group"
+              className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-button/5 to-primary/10 border border-button/15 hover:border-button/30 hover:shadow-md transition group"
             >
-              <div className="h-10 w-10 rounded-xl bg-pink-100 dark:bg-pink-900/50 group-hover:bg-pink-200 dark:group-hover:bg-pink-800 grid place-items-center transition">
-                <CurrencyDollarIcon className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+              <div className="h-10 w-10 rounded-xl bg-button/10 group-hover:bg-button/20 grid place-items-center transition">
+                <CurrencyDollarIcon className="h-5 w-5 text-button" />
               </div>
               <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Add Expense</span>
             </button>
@@ -373,7 +373,7 @@ export default function MemberDashboardPage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div data-tour="dashboard-recent-activity" className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Recent Activity</h3>
@@ -387,7 +387,7 @@ export default function MemberDashboardPage() {
                   key={index}
                   className="px-6 py-4 hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition flex items-start gap-4"
                 >
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/20 dark:to-purple-950/20 grid place-items-center flex-shrink-0">
+                  <div className="h-10 w-10 rounded-xl bg-accent grid place-items-center flex-shrink-0">
                     <span className="text-lg">{activity.icon}</span>
                   </div>
                   <div className="flex-1 min-w-0">

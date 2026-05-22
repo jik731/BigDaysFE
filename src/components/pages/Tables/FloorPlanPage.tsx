@@ -222,7 +222,7 @@ export default function FloorPlanPage() {
               <div className="flex items-center gap-3">
                 <span className="text-sm">Unassigned {guestName}</span>
                 <button
-                  className="text-xs font-semibold text-indigo-200 hover:text-white underline"
+                  className="text-xs font-semibold text-primary hover:text-button underline"
                   onClick={() => {
                     assignGuest.mutate(
                       { guestId, tableId: previousTableId },
@@ -305,7 +305,7 @@ export default function FloorPlanPage() {
             <div className="flex items-center gap-3">
               <span className="text-sm">{message}</span>
               <button
-                className="text-xs font-semibold text-indigo-200 hover:text-white underline"
+                className="text-xs font-semibold text-primary hover:text-button underline"
                 onClick={() => {
                   toast.dismiss(t.id);
                   restoreSnapshot(snapshot);
@@ -523,9 +523,9 @@ export default function FloorPlanPage() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-2 flex-wrap">
-        <h2 className="text-2xl font-semibold text-primary">Floor Plan</h2>
+        <h1 className="text-3xl font-display font-semibold text-primary">Floor Plan</h1>
         {!isReadOnly && (
-          <div className="flex flex-wrap items-center gap-2">
+          <div data-tour="floorplan-actions" className="flex flex-wrap items-center gap-2">
             <Button
               variant="secondary"
               onClick={handleAutoAssign}
@@ -535,7 +535,7 @@ export default function FloorPlanPage() {
             </Button>
             <Button
               variant="primary"
-              className="![background-image:none] !bg-indigo-500 !shadow-indigo-500/25 hover:!bg-indigo-600"
+              className="![background-image:none] !bg-primary !shadow-primary/25 hover:!bg-button"
               onClick={handleSaveLayout}
               loading={saveFloorPlan.isPending}
             >
@@ -567,7 +567,7 @@ export default function FloorPlanPage() {
       <div className="flex items-center gap-2 px-5 py-1.5 overflow-x-auto overflow-y-visible">
         {!isReadOnly && (
           <>
-            <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-100/80 dark:bg-slate-800/80 border border-gray-200/60 dark:border-gray-700/60 flex-shrink-0">
+            <div data-tour="floorplan-toolbar" className="flex items-center gap-0.5 p-0.5 rounded-lg bg-gray-100/80 dark:bg-slate-800/80 border border-gray-200/60 dark:border-gray-700/60 flex-shrink-0">
               <button onClick={() => handleShapeTool("round")} className={toolBtn(toolMode === "round")} title="Round table">
                 <div className={`w-4 h-4 rounded-full border-2 ${toolMode === "round" ? "border-white/60" : "border-primary/60"}`} />
               </button>
@@ -602,8 +602,8 @@ export default function FloorPlanPage() {
               onClick={openStandardize}
               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition ${
                 standardizeOpen
-                  ? "bg-indigo-500 text-white border-indigo-500 shadow-sm shadow-indigo-500/25"
-                  : "bg-white dark:bg-slate-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:border-indigo-300 hover:text-indigo-600 dark:hover:text-indigo-300"
+                  ? "bg-primary text-white border-primary shadow-sm shadow-primary/25"
+                  : "bg-white dark:bg-slate-800 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:border-primary/40 hover:text-primary dark:hover:text-primary"
               }`}
               title="Standardize all tables (shape + size) and re-arrange"
             >
@@ -616,8 +616,8 @@ export default function FloorPlanPage() {
         )}
 
         {selectedItem && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 animate-fade-in">
-            <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/20 animate-fade-in">
+            <span className="text-[11px] font-semibold text-primary whitespace-nowrap">
               {selectedItem.type === "table"
                 ? (selectedTable?.name ?? "Table")
                 : selectedItem.type === "stage" ? "Stage"
@@ -627,17 +627,17 @@ export default function FloorPlanPage() {
             </span>
 
             {!isReadOnly && selectedItem.type === "table" && (
-              <div className="flex items-center gap-0.5 ml-1 p-0.5 rounded bg-indigo-100/80 dark:bg-indigo-800/40">
+              <div className="flex items-center gap-0.5 ml-1 p-0.5 rounded bg-primary/15">
                 {(["round", "rect", "square"] as const).map((s) => (
                   <button
                     key={s}
                     onClick={() => changeTableShape(selectedId!, s)}
-                    className={`p-1 rounded transition ${selectedShape === s ? "bg-white dark:bg-indigo-700 shadow-sm" : "hover:bg-white/60 dark:hover:bg-indigo-700/40"}`}
+                    className={`p-1 rounded transition ${selectedShape === s ? "bg-white shadow-sm" : "hover:bg-white/60"}`}
                     title={`Change to ${s}`}
                   >
-                    {s === "round" && <div className="w-3 h-3 rounded-full border-2 border-indigo-500" />}
-                    {s === "rect" && <div className="w-5 h-2.5 rounded-sm border-2 border-indigo-500" />}
-                    {s === "square" && <div className="w-3 h-3 rounded-sm border-2 border-indigo-500" />}
+                    {s === "round" && <div className="w-3 h-3 rounded-full border-2 border-primary" />}
+                    {s === "rect" && <div className="w-5 h-2.5 rounded-sm border-2 border-primary" />}
+                    {s === "square" && <div className="w-3 h-3 rounded-sm border-2 border-primary" />}
                   </button>
                 ))}
               </div>
@@ -646,7 +646,7 @@ export default function FloorPlanPage() {
             {!isReadOnly && selectedItem.type !== "table" && (
               <button
                 onClick={rotateSelected}
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition"
+                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-medium text-primary hover:bg-primary/15 transition"
                 title={`Rotate 45° (current: ${selectedItem.rotation ?? 0}°)`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-3 w-3">
@@ -671,7 +671,7 @@ export default function FloorPlanPage() {
 
             <button
               onClick={() => setSelectedId(null)}
-              className="ml-0.5 p-0.5 rounded text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition"
+              className="ml-0.5 p-0.5 rounded text-primary/60 hover:text-primary transition"
               title="Deselect"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-3 w-3">
@@ -756,7 +756,7 @@ export default function FloorPlanPage() {
               onSeatClick={isReadOnly ? () => {} : handleSeatClick}
               onResizeItem={isReadOnly ? () => {} : handleResizeItem}
             />
-            <div className="hidden lg:flex h-full">
+            <div data-tour="floorplan-guest-panel" className="hidden lg:flex h-full">
               <FloorGuestPanelV3
                 guests={guests}
                 tables={tables.map((t) => ({ id: t.id, name: t.name }))}
@@ -854,7 +854,7 @@ export default function FloorPlanPage() {
                     <button
                       key={g.id}
                       onClick={() => handlePopoverAssign(g.id)}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-slate-700 transition flex items-center justify-between group"
+                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-primary/5 transition flex items-center justify-between group"
                     >
                       <div>
                         <span className="text-sm font-medium text-slate-800 dark:text-white">{g.name}</span>
@@ -935,14 +935,14 @@ export default function FloorPlanPage() {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="px-4 py-3 bg-gradient-to-r from-indigo-500 to-violet-500 text-white">
+              <div className="px-4 py-3 bg-gradient-to-r from-primary to-button text-white">
                 <div className="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                   </svg>
                   <p className="text-sm font-semibold">Standardize Tables</p>
                 </div>
-                <p className="text-[10px] text-indigo-100 mt-0.5 leading-tight">
+                <p className="text-[10px] text-white/80 mt-0.5 leading-tight">
                   Unify shape and size across all {tables.length} tables
                 </p>
               </div>
@@ -959,21 +959,21 @@ export default function FloorPlanPage() {
                         onClick={() => setStdShape(s)}
                         className={`flex flex-col items-center justify-center gap-1 py-2 rounded-lg border-2 transition ${
                           stdShape === s
-                            ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30"
-                            : "border-gray-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700"
+                            ? "border-primary bg-primary/10"
+                            : "border-gray-200 dark:border-gray-700 hover:border-primary/40"
                         }`}
                       >
                         {s === "round" && (
-                          <div className={`w-5 h-5 rounded-full border-2 ${stdShape === s ? "border-indigo-500" : "border-gray-400"}`} />
+                          <div className={`w-5 h-5 rounded-full border-2 ${stdShape === s ? "border-primary" : "border-gray-400"}`} />
                         )}
                         {s === "rect" && (
-                          <div className={`w-7 h-3 rounded-sm border-2 ${stdShape === s ? "border-indigo-500" : "border-gray-400"}`} />
+                          <div className={`w-7 h-3 rounded-sm border-2 ${stdShape === s ? "border-primary" : "border-gray-400"}`} />
                         )}
                         {s === "square" && (
-                          <div className={`w-5 h-5 rounded-sm border-2 ${stdShape === s ? "border-indigo-500" : "border-gray-400"}`} />
+                          <div className={`w-5 h-5 rounded-sm border-2 ${stdShape === s ? "border-primary" : "border-gray-400"}`} />
                         )}
                         <span className={`text-[10px] font-medium capitalize ${
-                          stdShape === s ? "text-indigo-700 dark:text-indigo-300" : "text-gray-500 dark:text-gray-400"
+                          stdShape === s ? "text-primary" : "text-gray-500 dark:text-gray-400"
                         }`}>
                           {s === "rect" ? "Long" : s}
                         </span>
@@ -991,11 +991,11 @@ export default function FloorPlanPage() {
                       onClick={() => setStdSizeMode("byCapacity")}
                       className={`py-2 px-2 rounded-lg border-2 text-left transition ${
                         stdSizeMode === "byCapacity"
-                          ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30"
-                          : "border-gray-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700"
+                          ? "border-primary bg-primary/10"
+                          : "border-gray-200 dark:border-gray-700 hover:border-primary/40"
                       }`}
                     >
-                      <p className={`text-[11px] font-semibold ${stdSizeMode === "byCapacity" ? "text-indigo-700 dark:text-indigo-300" : "text-gray-700 dark:text-gray-200"}`}>
+                      <p className={`text-[11px] font-semibold ${stdSizeMode === "byCapacity" ? "text-primary" : "text-gray-700 dark:text-gray-200"}`}>
                         Auto
                       </p>
                       <p className="text-[9px] text-gray-500 dark:text-gray-400 leading-tight">
@@ -1006,11 +1006,11 @@ export default function FloorPlanPage() {
                       onClick={() => setStdSizeMode("uniform")}
                       className={`py-2 px-2 rounded-lg border-2 text-left transition ${
                         stdSizeMode === "uniform"
-                          ? "border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30"
-                          : "border-gray-200 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-700"
+                          ? "border-primary bg-primary/10"
+                          : "border-gray-200 dark:border-gray-700 hover:border-primary/40"
                       }`}
                     >
-                      <p className={`text-[11px] font-semibold ${stdSizeMode === "uniform" ? "text-indigo-700 dark:text-indigo-300" : "text-gray-700 dark:text-gray-200"}`}>
+                      <p className={`text-[11px] font-semibold ${stdSizeMode === "uniform" ? "text-primary" : "text-gray-700 dark:text-gray-200"}`}>
                         Uniform
                       </p>
                       <p className="text-[9px] text-gray-500 dark:text-gray-400 leading-tight">
@@ -1039,7 +1039,7 @@ export default function FloorPlanPage() {
                 </button>
                 <button
                   onClick={handleApplyStandardize}
-                  className="flex-1 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow-sm shadow-indigo-500/25 hover:brightness-110 transition"
+                  className="flex-1 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-primary to-button text-white shadow-sm shadow-primary/25 hover:brightness-110 transition"
                 >
                   Apply
                 </button>

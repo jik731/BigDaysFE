@@ -41,7 +41,7 @@ function IconsTab() {
       />
       <GuideCard
         icon={
-          <span className="p-3 rounded-xl bg-blue-500 text-white inline-flex">
+          <span className="p-3 rounded-xl bg-primary text-white inline-flex">
             <Chair size={24} weight="bold" />
           </span>
         }

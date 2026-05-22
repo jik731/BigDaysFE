@@ -2,7 +2,7 @@
 import { PageLoader } from "../../atoms/PageLoader";
 import { ErrorState } from "../../atoms/ErrorState";
 import { useState, useMemo } from "react";
-import { UserGroupIcon, UserIcon, CheckCircleIcon, XIcon, PencilIcon } from "@heroicons/react/solid";
+import { UserGroupIcon, UserIcon, CheckCircleIcon, XIcon, PencilIcon, LightBulbIcon } from "@heroicons/react/solid";
 import { Chair, DotsThree } from "@phosphor-icons/react";
 import { useAuth } from "../../../api/hooks/useAuth";
 import {
@@ -228,23 +228,25 @@ export default function GuestsPage() {
   return (
     <>
       {/* Header + Controls */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
+      <div data-tour="guests-header" className="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-primary">Guests</h2>
+          <h1 className="text-3xl font-display font-semibold text-primary">Guests</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and organize your guest list</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => setHelpModalOpen(true)}
-            title="How to use this page"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
-            aria-label="Open help guide"
+            title="Tips for this page"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-primary/5 text-primary border border-primary/20 hover:bg-primary/10 transition-colors"
+            aria-label="Open page tips"
           >
-            ? Guide
+            <LightBulbIcon className="h-3.5 w-3.5" />
+            Tips
           </button>
           {!isReadOnly && (
             <Button
+              data-tour="guests-generate-qr"
               variant="secondary"
               onClick={handleGenerateQr}
               disabled={generateQr.isPending}
@@ -257,13 +259,13 @@ export default function GuestsPage() {
 
       {/* Note Banner */}
       {!bannerDismissed && (
-        <div className="flex items-start gap-3 px-4 py-3 mb-5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl text-sm text-blue-700 dark:text-blue-300">
+        <div className="flex items-start gap-3 px-4 py-3 mb-5 bg-primary/5 border border-primary/20 rounded-xl text-sm text-primary">
           <span className="flex-1">
             <span className="font-medium">Note:</span> Guests are automatically created when RSVP submissions include attendees (pax &gt; 0). Guest deletion is only available through the RSVP module.
           </span>
           <button
             onClick={() => { setBannerDismissed(true); sessionStorage.setItem("guestBannerDismissed", "1"); }}
-            className="flex-shrink-0 text-blue-400 hover:text-blue-600 dark:hover:text-blue-200 transition text-base leading-none mt-0.5"
+            className="flex-shrink-0 text-primary/50 hover:text-primary transition text-base leading-none mt-0.5"
             aria-label="Dismiss"
           >
             ✕
@@ -272,14 +274,14 @@ export default function GuestsPage() {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div data-tour="guests-stats" className="grid grid-cols-3 gap-3 mb-6">
         <StatsCard label="Total Guests" value={stats.total} variant="primary" size="sm" icon={<UserGroupIcon className="w-4 h-4" />} />
         <StatsCard label="Assigned" value={stats.assigned} variant="success" size="sm" icon={<CheckCircleIcon className="w-4 h-4" />} />
         <StatsCard label="Unassigned" value={stats.unassigned} variant="warning" size="sm" icon={<UserIcon className="w-4 h-4" />} />
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-center mb-4 gap-4">
+      <div data-tour="guests-filters" className="flex flex-col md:flex-row md:items-center mb-4 gap-4">
         <select
           value={guestTypeFilter}
           onChange={(e) => setGuestTypeFilter(e.target.value)}
@@ -471,7 +473,7 @@ export default function GuestsPage() {
                         <button
                           onClick={() => setAssignModal({ open: true, guest })}
                           title="Assign to table"
-                          className="p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                          className="p-2 rounded-lg bg-primary text-white hover:bg-button transition-colors"
                         >
                           <Chair size={16} weight="bold" />
                         </button>

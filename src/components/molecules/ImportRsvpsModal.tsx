@@ -11,10 +11,12 @@ import type { FormFieldConfig } from "../../api/hooks/useFormFieldsApi";
 interface ParsedRow {
   guestName: string;
   payload: {
+    eventId: string;
     guestName: string;
     phoneNo: string;
     noOfPax: number;
     remarks: string;
+    answers?: Array<{ questionId: string; text: string }>;
     [key: string]: unknown;
   };
 }
@@ -127,7 +129,7 @@ export const ImportRsvpsModal: React.FC<Props> = ({
         }
 
         // Build column index → field key map
-        const colMap: Array<{ key: string; isCustom?: boolean; fieldName?: string }> = headerRow.map((h) => {
+        const colMap: Array<{ key: string; isCustom?: boolean; fieldName?: string; questionId?: string }> = headerRow.map((h) => {
           const normalized = h.replace(/\s+/g, "");
           if (normalized === "guestname" || normalized === "name") return { key: "guestName" };
           if (normalized === "phoneno" || normalized === "phone") return { key: "phoneNo" };
@@ -139,7 +141,7 @@ export const ImportRsvpsModal: React.FC<Props> = ({
             (f) => (f.label ?? "").toLowerCase() === h || (f.name ?? "").toLowerCase() === h
           );
           if (matchedField) {
-            return { key: matchedField.name ?? h, isCustom: true, fieldName: matchedField.name ?? h };
+            return { key: matchedField.name ?? h, isCustom: true, fieldName: matchedField.name ?? h, questionId: matchedField.questionId };
           }
 
           return { key: h, isCustom: true };
@@ -169,10 +171,10 @@ export const ImportRsvpsModal: React.FC<Props> = ({
             if (!isNaN(parsed)) noOfPax = parsed;
           }
 
-          // Build extras from custom fields
-          const extras: Record<string, unknown> = {};
+          // Build answers array from custom fields (BE expects { questionId, text }[])
+          const answers: Array<{ questionId: string; text: string }> = [];
           colMap.forEach((col) => {
-            if (col.isCustom && col.fieldName) {
+            if (col.isCustom && col.fieldName && col.questionId) {
               let val = String(obj[col.key] ?? "").trim();
               const fieldDef = formFields.find((f) => f.name === col.fieldName);
               if (fieldDef?.typeKey === "checkbox") {
@@ -188,18 +190,19 @@ export const ImportRsvpsModal: React.FC<Props> = ({
                   val = opts[n - 1];
                 }
               }
-              extras[col.fieldName] = val;
+              answers.push({ questionId: col.questionId, text: val });
             }
           });
 
           parsed.push({
             guestName: rawName,
             payload: {
+              eventId,
               guestName: rawName,
               phoneNo: String(obj["phoneNo"] ?? "").trim(),
               noOfPax,
               remarks: String(obj["remarks"] ?? "").trim(),
-              ...extras,
+              ...(answers.length > 0 ? { answers } : {}),
             },
           });
         }

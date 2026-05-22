@@ -25,8 +25,14 @@ export interface TableCardProps {
   onUnassignGuest?: (guestId: string) => void;
   onGuestDragStart?: (guestId: string, sourceTableId: string) => void;
   onGuestDragEnd?: () => void;
+  /** Tap/click an internal guest to pick them up (mobile-friendly alt to drag). */
+  onGuestPick?: (guestId: string, sourceTableId: string) => void;
+  /** Tap/click this whole card to assign the currently-picked guest to it. */
+  onTableClick?: (tableId: string) => void;
   isDropTarget?: boolean;
   draggedGuest?: { id: string; paxCount: number; sourceTableId?: string | null } | null;
+  /** The currently-picked guest, if any. Used to show a "selectable" highlight. */
+  pickedGuest?: { id: string; paxCount: number; sourceTableId: string | null } | null;
 }
 
 export const TableCard: React.FC<TableCardProps> = ({
@@ -37,11 +43,19 @@ export const TableCard: React.FC<TableCardProps> = ({
   onUnassignGuest,
   onGuestDragStart,
   onGuestDragEnd,
+  onGuestPick,
+  onTableClick,
   draggedGuest,
+  pickedGuest,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
   const isSourceTable = !!draggedGuest && draggedGuest.sourceTableId === table.id;
+  // Picked-state helpers (separate from drag state):
+  const isPickSource = !!pickedGuest && pickedGuest.sourceTableId === table.id;
+  const pickedFits = pickedGuest
+    ? pickedGuest.paxCount <= (table.capacity - (isPickSource ? table.assignedCount - pickedGuest.paxCount : table.assignedCount))
+    : true;
   // When the dragged guest originates from this table, exclude their pax from the
   // current assigned count so the capacity hint reflects the post-move state.
   const effectiveAssignedCount = isSourceTable
@@ -107,15 +121,25 @@ export const TableCard: React.FC<TableCardProps> = ({
     }
   };
 
+  // Wrapper click only does something when a guest is currently picked.
+  // Clicking the same table the guest came from = cancel pickup.
+  const handleWrapperClick = pickedGuest
+    ? () => onTableClick?.(table.id)
+    : undefined;
+
   return (
     <div
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      onClick={handleWrapperClick}
       className={`
         relative rounded-xl shadow-sm overflow-hidden transition-all
         ${isDragOver && canAcceptDrop ? "ring-4 ring-primary ring-offset-2 shadow-lg scale-[1.02]" : ""}
         ${!canAcceptDrop && draggedGuest ? "opacity-50 cursor-not-allowed" : ""}
+        ${pickedGuest && !isPickSource && pickedFits ? "ring-2 ring-primary/50 ring-offset-1 cursor-pointer" : ""}
+        ${pickedGuest && !isPickSource && !pickedFits ? "ring-2 ring-red-300 opacity-60" : ""}
+        ${isPickSource ? "ring-2 ring-amber-300 ring-offset-1 cursor-pointer" : ""}
         hover:shadow-md
       `}
       role="region"
@@ -173,7 +197,9 @@ export const TableCard: React.FC<TableCardProps> = ({
           ) : (
             table.guests.map((guest) => {
               const isGuestDraggable = !!onGuestDragStart;
+              const isGuestPickable = !!onGuestPick;
               const isBeingDragged = draggedGuest?.id === guest.id;
+              const isBeingPicked = pickedGuest?.id === guest.id;
               return (
                 <div
                   key={guest.id}
@@ -193,12 +219,41 @@ export const TableCard: React.FC<TableCardProps> = ({
                       ? () => onGuestDragEnd?.()
                       : undefined
                   }
-                  title={isGuestDraggable ? "Drag to reassign to another table" : undefined}
+                  onClick={
+                    isGuestPickable
+                      ? (e) => {
+                          e.stopPropagation();
+                          onGuestPick?.(guest.id, table.id);
+                        }
+                      : undefined
+                  }
+                  onKeyDown={
+                    isGuestPickable
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            onGuestPick?.(guest.id, table.id);
+                          }
+                        }
+                      : undefined
+                  }
+                  role={isGuestPickable ? "button" : undefined}
+                  tabIndex={isGuestPickable ? 0 : undefined}
+                  title={
+                    isGuestPickable
+                      ? "Tap to pick up, then tap another table to move or the Unassigned panel to remove"
+                      : isGuestDraggable
+                      ? "Drag to reassign to another table"
+                      : undefined
+                  }
                   className={`
                     flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-gray-800 group
                     hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors
-                    ${isGuestDraggable ? "cursor-grab active:cursor-grabbing select-none" : ""}
+                    ${isGuestPickable ? "cursor-pointer" : isGuestDraggable ? "cursor-grab active:cursor-grabbing" : ""}
+                    ${isGuestDraggable || isGuestPickable ? "select-none" : ""}
                     ${isBeingDragged ? "opacity-50" : ""}
+                    ${isBeingPicked ? "ring-2 ring-primary bg-primary/10 dark:bg-primary/20" : ""}
                   `}
                 >
                   {/* Initial avatar */}
@@ -217,7 +272,10 @@ export const TableCard: React.FC<TableCardProps> = ({
                   </div>
                   {onUnassignGuest && (
                     <button
-                      onClick={() => onUnassignGuest(guest.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUnassignGuest(guest.id);
+                      }}
                       className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded"
                       title="Unassign guest"
                     >
@@ -236,7 +294,7 @@ export const TableCard: React.FC<TableCardProps> = ({
             {onEdit && (
               <button
                 title="Edit"
-                onClick={() => onEdit(table.id)}
+                onClick={(e) => { e.stopPropagation(); onEdit(table.id); }}
                 className="p-2 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 dark:bg-accent dark:border-white/10 dark:text-white dark:hover:bg-white/10 transition-colors"
               >
                 <PencilIcon className="h-4 w-4" />
@@ -245,7 +303,7 @@ export const TableCard: React.FC<TableCardProps> = ({
             {onDelete && (
               <button
                 title="Delete"
-                onClick={() => onDelete(table.id)}
+                onClick={(e) => { e.stopPropagation(); onDelete(table.id); }}
                 className="p-2 rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-50 dark:bg-accent dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors"
               >
                 <TrashIcon className="h-4 w-4" />

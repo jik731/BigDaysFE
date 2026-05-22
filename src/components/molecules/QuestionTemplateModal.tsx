@@ -78,7 +78,7 @@ export function QuestionTemplateModal({ isOpen, onClose, onAdd, isLoading }: Pro
               <p className="text-sm font-medium truncate">{tpl.label}</p>
               <p className="text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">{tpl.text}</p>
             </div>
-            <span className="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300 flex-shrink-0">
+            <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary flex-shrink-0">
               {tpl.typeKey}
             </span>
             {tpl.isRequired && (

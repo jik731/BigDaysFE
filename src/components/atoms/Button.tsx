@@ -19,7 +19,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const color =
     variant === "primary"
-      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-lg shadow-primary/25 hover:brightness-105 active:translate-y-[1px] focus:ring-primary/40"
+      ? "bg-gradient-to-r from-primary to-secondary text-white shadow-md shadow-primary/15 hover:brightness-105 active:translate-y-[1px] focus:ring-primary/40"
       : variant === "secondary"
         ? "bg-white text-text border border-primary/15 hover:border-primary/30 hover:bg-primary/5 dark:bg-accent dark:text-white dark:border-white/10 dark:hover:bg-white/10 focus:ring-primary/25"
         : "bg-transparent text-primary hover:bg-primary/10 dark:hover:bg-white/10 focus:ring-primary/15";

@@ -183,7 +183,7 @@ export const EventFormModal: React.FC<EventFormModalProps> = ({
             <button
               type="button"
               onClick={() => setRsvpDueDate("")}
-              className="absolute top-0 right-0 text-xs text-blue-600 hover:underline"
+              className="absolute top-0 right-0 text-xs text-primary hover:underline"
             >
               Clear
             </button>

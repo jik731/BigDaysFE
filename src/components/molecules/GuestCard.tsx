@@ -13,14 +13,20 @@ export interface GuestCardProps {
   };
   onDragStart?: (guestId: string) => void;
   onDragEnd?: () => void;
+  /** Tap/click to pick this guest up — alternate to drag (mobile-friendly). */
+  onPick?: (guestId: string) => void;
   isDragging?: boolean;
+  /** Highlights this card as the currently-picked guest. */
+  isPicked?: boolean;
 }
 
 export const GuestCard: React.FC<GuestCardProps> = ({
   guest,
   onDragStart,
   onDragEnd,
+  onPick,
   isDragging = false,
+  isPicked = false,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
 
@@ -39,19 +45,23 @@ export const GuestCard: React.FC<GuestCardProps> = ({
       draggable="true"
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
+      onClick={onPick ? () => onPick(guest.id) : undefined}
+      onKeyDown={onPick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(guest.id); } } : undefined}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       className={`
         p-3 rounded-lg border border-gray-200
         bg-white dark:bg-accent/50 dark:border-gray-600
-        transition-all cursor-grab active:cursor-grabbing
+        transition-all ${onPick ? "cursor-pointer" : "cursor-grab"} active:cursor-grabbing
         touch-none select-none
-        ${isHovering ? "border-primary bg-indigo-50 dark:bg-primary/10 shadow-md" : ""}
+        ${isHovering && !isPicked ? "border-primary bg-primary/5 shadow-md" : ""}
+        ${isPicked ? "ring-2 ring-primary ring-offset-1 bg-primary/10 dark:bg-primary/20 border-primary shadow-md" : ""}
         ${isDragging ? "opacity-50" : "opacity-100"}
       `}
       role="button"
       tabIndex={0}
-      aria-label={`Drag ${guest.guestName} to assign to a table`}
+      aria-label={onPick ? `Tap to pick up ${guest.guestName}, then tap a table to seat` : `Drag ${guest.guestName} to assign to a table`}
+      aria-pressed={isPicked}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-1.5 min-w-0">
